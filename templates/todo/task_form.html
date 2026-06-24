@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}タスク作成{% endblock %}
+
+{% block content %}
+<h1>タスク作成</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">作成</button>
+</form>
+{% endblock %}

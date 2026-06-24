@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.utils import timezone
 from datetime import datetime
 from todo.models import Task
@@ -50,3 +50,22 @@ class TaskModelTestCase(TestCase):
         task.save()
 
         self.assertFalse(task.is_overdue(current))
+
+class CreateTaskViewTestCase(TestCase):
+    def test_status_code_200(self):
+        response = self.client.get('/todo/create/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_task_create_form_in_context(self):
+        response = self.client.get('/todo/create/')
+        self.assertIn('form', response.context)
+
+    def test_task_create_post(self):
+        due = timezone.make_aware(datetime(2024, 6, 30, 23, 59, 59))
+        response = self.client.post('/todo/create/', {'title': 'task1', 'due_at': due.strftime('%Y-%m-%d %H:%M:%S')})
+        self.assertEqual(response.status_code, 302)
+
+    def test_task_create_redirect(self):
+        due = timezone.make_aware(datetime(2024, 6, 30, 23, 59, 59))
+        response = self.client.post('/todo/create/', {'title': 'task1', 'due_at': due.strftime('%Y-%m-%d %H:%M:%S')})
+        self.assertRedirects(response, '/todo/create/')
