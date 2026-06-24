@@ -53,19 +53,17 @@ class TaskModelTestCase(TestCase):
 
 class CreateTaskViewTestCase(TestCase):
     def test_status_code_200(self):
-        response = self.client.get('/todo/create/')
+        response = self.client.get('/todo/')
         self.assertEqual(response.status_code, 200)
 
     def test_task_create_form_in_context(self):
-        response = self.client.get('/todo/create/')
-        self.assertIn('form', response.context)
+        response = self.client.get('/todo/')
+        self.assertIn('tasks', response.context)
 
     def test_task_create_post(self):
-        due = timezone.make_aware(datetime(2024, 6, 30, 23, 59, 59))
-        response = self.client.post('/todo/create/', {'title': 'task1', 'due_at': due.strftime('%Y-%m-%d %H:%M:%S')})
+        response = self.client.post('/todo/', {'title': 'task1', 'due_at': '2024-06-30T23:59:59'})
         self.assertEqual(response.status_code, 302)
 
     def test_task_create_redirect(self):
-        due = timezone.make_aware(datetime(2024, 6, 30, 23, 59, 59))
-        response = self.client.post('/todo/create/', {'title': 'task1', 'due_at': due.strftime('%Y-%m-%d %H:%M:%S')})
-        self.assertRedirects(response, '/todo/create/')
+        response = self.client.post('/todo/', {'title': 'task1', 'due_at': '2024-06-30T23:59:59'})
+        self.assertRedirects(response, '/todo/')

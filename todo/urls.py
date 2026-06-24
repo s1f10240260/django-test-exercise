@@ -1,8 +1,6 @@
 from django.urls import path
-from todo.views import CreateTaskView
-
-app_name = 'todo'
+from todo.views import index
 
 urlpatterns = [
-    path('create/', CreateTaskView.as_view(), name='create'),
+    path('', index, name='index'),
 ]

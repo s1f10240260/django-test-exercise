@@ -1,10 +1,20 @@
-from django.shortcuts import render
-from django.views.generic.edit import CreateView
+from django.shortcuts import render, redirect
 from todo.models import Task
 
 # Create your views here.
-class CreateTaskView(CreateView):
-    model = Task
-    fields = ['title', 'due_at']
-    template_name = 'todo/task_form.html'
-    success_url = '/todo/create/'
+def index(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        due_at = request.POST.get('due_at') or None
+        Task.objects.create(title=title, due_at=due_at)
+        return redirect('index')
+
+    order = request.GET.get('order')
+    if order == 'due':
+        tasks = Task.objects.order_by('due_at')
+    elif order == 'post':
+        tasks = Task.objects.order_by('posted_at')
+    else:
+        tasks = Task.objects.all()
+
+    return render(request, 'todo/index.html', {'tasks': tasks})
