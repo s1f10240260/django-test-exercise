@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import Http404
 from todo.models import Task
 
 
@@ -19,3 +20,11 @@ def index(request):
         tasks = Task.objects.all()
 
     return render(request, 'todo/index.html', {'tasks': tasks})
+
+
+def detail(request, task_id):
+    try:
+        task = Task.objects.get(pk=task_id)
+    except Task.DoesNotExist:
+        raise Http404("Task does not exist")
+    return render(request, 'todo/detail.html', {'task': task})
