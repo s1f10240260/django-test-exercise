@@ -67,3 +67,21 @@ class CreateTaskViewTestCase(TestCase):
     def test_task_create_redirect(self):
         response = self.client.post('/todo/', {'title': 'task1', 'due_at': '2024-06-30T23:59:59'})
         self.assertRedirects(response, '/todo/')
+
+class TodoViewTestCase(TestCase):
+    def test_index_get_three_content(self):
+        task1 = Task(title='task1', due_at=timezone.make_aware(datetime(2023, 7, 1)))
+        task1.save()
+        task2 = Task(title='task2', due_at=timezone.make_aware(datetime(2023, 8, 1)))
+        task2.save()
+        task3 = Task(title='task3', due_at=timezone.make_aware(datetime(2023, 9, 1)))
+        task3.save()
+        client = Client()
+        response = client.get('/todo/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.templates[0].name, 'todo/index.html')
+        self.assertEqual(len(response.context['tasks']), 3)
+        self.assertEqual(response.context['tasks'][0], task1)
+        self.assertEqual(response.context['tasks'][1], task2)
+        self.assertEqual(response.context['tasks'][2], task3)
