@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from todo.models import Task
 
+
 # Create your views here.
 def index(request):
     if request.method == 'POST':
